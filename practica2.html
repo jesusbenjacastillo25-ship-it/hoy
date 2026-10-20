@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café Benji</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        espresso: {
+                            50: '#fbf8f5',
+                            100: '#f5eee6',
+                            200: '#e8dabf',
+                            600: '#8c5a3c',
+                            800: '#4a2c1d',
+                            900: '#2c1810',
+                            950: '#1a0d08'
+                        },
+                        crema: {
+                            50: '#fffdfa',
+                            100: '#fef9f0',
+                            200: '#fbf0dc',
+                            300: '#f5deaf',
+                            400: '#e1a660'
+                        },
+                        terracota: {
+                            500: '#c85a32',
+                            600: '#b04723'
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706'
+                        },
+                        mint: {
+                            100: '#e6f7f2',
+                            500: '#10b981',
+                            600: '#059669'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['Courier New', 'Courier', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }
+        .glass-card {
+            background: rgba(255, 253, 250, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(232, 218, 191, 0.5);
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at 70% 30%, rgba(200, 90, 50, 0.08) 0%, rgba(44, 24, 16, 0.03) 70%), #faf6f0;
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #f59e0b 0%, #c85a32 100%);
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f5eee6; }
+        ::-webkit-scrollbar-thumb { background: #8c5a3c; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4a2c1d; }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-ticket, #printable-ticket * {
+                visibility: visible;
+            }
+            #printable-ticket {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 20px;
+                background: #ffffff !important;
+                color: #000000 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-espresso-50 text-espresso-950 antialiased min-h-screen flex flex-col justify-between selection:bg-terracota-500 selection:text-white">
+
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 no-print"></div>
+
+    <header class="sticky top-0 z-40 bg-espresso-900/95 backdrop-blur-md text-crema-100 border-b border-espresso-800/60 shadow-xl transition-all no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            <a href="#inicio" class="flex items-center gap-3 group">
+                <div class="w-11 h-11 gold-gradient text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-lg shadow-terracota-500/20 group-hover:scale-105 transition duration-300">
+                    <i class="fa-solid fa-mug-saucer text-lg"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-serif font-bold text-2xl tracking-tight text-white group-hover:text-crema-300 transition">
+                        Café <span class="text-gold-400 italic">Benji</span>
+                    </span>
+                    <span class="text-[10px] tracking-widest uppercase text-crema-300/70 font-semibold -mt-1">Especialidad & Bakehouse</span>
+                </div>
+            </a>
+
+            <nav class="hidden md:flex items-center space-x-7 font-medium text-crema-200/90 text-sm">
+                <a href="#inicio" class="hover:text-gold-400 transition">Inicio</a>
+                <a href="#menu" class="hover:text-gold-400 transition">Menú</a>
+                <a href="#reseñas" class="hover:text-gold-400 transition">Reseñas</a>
+                <a href="#faq" class="hover:text-gold-400 transition">Preguntas Frecuentes</a>
+                <a href="#soporte" onclick="openModal('Atención Personalizada', '¿Tienes un evento especial o consulta sobre nuestros granos de origen? Llámanos al +52 55 9876 5432 o escríbenos a concierge@cafebenji.com')" class="hover:text-gold-400 transition">Soporte</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <form id="search-form" onsubmit="handleSearch(event)" class="hidden lg:flex items-center gap-2 bg-espresso-950/80 rounded-full px-4 py-2 border border-espresso-800 focus-within:border-gold-400 focus-within:ring-1 focus-within:ring-gold-400 transition">
+                    <i class="fa-solid fa-magnifying-glass text-espresso-600 text-xs"></i>
+                    <input type="text" id="search-input" placeholder="Buscar espresso, tarta..." class="bg-transparent text-xs text-white placeholder-espresso-600 outline-none w-36 focus:w-48 transition-all">
+                    <button type="submit" class="bg-terracota-500 hover:bg-terracota-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full transition">Ir</button>
+                </form>
+
+                <button onclick="toggleCartModal()" class="relative bg-espresso-800/80 hover:bg-espresso-800 text-crema-100 p-2.5 rounded-xl border border-espresso-700/50 flex items-center justify-center transition active:scale-95" title="Ver Carrito">
+                    <i class="fa-solid fa-bag-shopping text-base"></i>
+                    <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-terracota-500 text-white text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-espresso-900 shadow-md hidden">0</span>
+                </button>
+
+                <button onclick="openModal('Mi Club Benji', 'Accede a tu perfil VIP para acumular granos de fidelidad, canjear cafés de cortesía y personalizar tus entregas automatizadas.')" class="bg-gold-500 hover:bg-gold-600 text-espresso-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-md transition transform active:scale-95">
+                    <i class="fa-solid fa-crown text-xs"></i>
+                    <span class="hidden sm:inline">Mi Cuenta</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section id="inicio" class="hero-gradient py-16 md:py-24 border-b border-espresso-200/60 relative overflow-hidden no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6 text-center md:text-left">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-terracota-500/10 border border-terracota-500/20 text-terracota-600 text-xs font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-fire-flame-curved"></i> Cosecha de Altura Seleccionada
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-extrabold text-espresso-900 leading-[1.15]">
+                        Revoluciona tu momento con <span class="text-terracota-500 italic">Café Benji</span>
+                    </h1>
+                    <p class="text-espresso-800/80 text-base sm:text-lg leading-relaxed max-w-xl mx-auto md:mx-0">
+                        Una atmósfera donde el arte del tueste fino se fusiona con la repostería artesanal recién horneada. Siente el aroma de notas acarameladas y texturas inolvidables.
+                    </p>
+                    <div class="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
+                        <a href="#menu" class="gold-gradient text-white px-7 py-3.5 rounded-xl font-bold text-sm shadow-xl shadow-terracota-500/20 hover:opacity-95 transition transform active:scale-95 flex items-center gap-2">
+                            <span>Explorar Menú</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </a>
+                        <button onclick="openModal('Nuestra Historia', 'Fundada con la visión de rendir homenaje al origen de cada grano, Café Benji trabaja directamente con caficultores de pequeñas fincas familiares en Chiapas, Oaxaca y Colombia.')" class="bg-espresso-100 hover:bg-espresso-200/80 text-espresso-900 px-6 py-3.5 rounded-xl font-semibold text-sm border border-espresso-200 transition transform active:scale-95 flex items-center gap-2">
+                            <i class="fa-solid fa-book-open text-espresso-600"></i>
+                            <span>Ver Historia</span>
+                        </button>
+                    </div>
+
+                    <div class="pt-6 border-t border-espresso-200/80 grid grid-cols-3 gap-4 text-center md:text-left">
+                        <div>
+                            <span class="block text-2xl font-extrabold text-espresso-900 font-serif">100%</span>
+                            <span class="text-xs text-espresso-600 font-medium">Granos Arábica</span>
+                        </div>
+                        <div>
+                            <span class="block text-2xl font-extrabold text-espresso-900 font-serif">4.9 ★</span>
+                            <span class="text-xs text-espresso-600 font-medium">+2,400 Reseñas</span>
+                        </div>
+                        <div>
+                            <span class="block text-2xl font-extrabold text-espresso-900 font-serif">30 min</span>
+                            <span class="text-xs text-espresso-600 font-medium">Entrega Exprés</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="relative rounded-3xl overflow-hidden shadow-2xl border-8 border-crema-50 bg-espresso-900 group">
+                        <img 
+                            src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1000&q=80" 
+                            alt="Café Benji Banner Especialidad" 
+                            class="w-full h-[380px] sm:h-[450px] object-cover group-hover:scale-105 transition duration-700 opacity-90"
+                            onerror="this.onerror=null; this.src='https://placehold.co/800x600/2c1810/ffffff?text=Cafe+Benji+Gourmet';"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-espresso-950/80 via-transparent to-transparent flex flex-col justify-end p-6">
+                            <div class="glass-card p-4 rounded-2xl border border-white/30 flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-mint-500/20 text-mint-600 flex items-center justify-center text-xl shrink-0">
+                                    <i class="fa-solid fa-leaf"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-sm">Tueste Fresco del Día</h4>
+                                    <p class="text-xs text-slate-600">Perfil de sabor: Caramelo, Avellana tostada y Cítricos dulce</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="menu" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full no-print">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="text-terracota-500 font-bold text-xs uppercase tracking-widest">Catálogo Seleccionado</span>
+            <h2 class="text-3xl sm:text-4xl font-serif font-extrabold text-espresso-900 mt-1">
+                Especialidades de la Casa Benji
+            </h2>
+            <p class="text-espresso-800/70 mt-3 text-sm sm:text-base">
+                Selecciona entre nuestras distintas categorías de bebidas artesanales e ingredientes de panadería elaborados cada mañana.
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-2.5 mt-8" id="category-tabs">
+                <button onclick="filterCategory('all')" class="cat-btn active bg-espresso-900 text-crema-100 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md transition">Todos</button>
+                <button onclick="filterCategory('especiales')" class="cat-btn bg-espresso-100 hover:bg-espresso-200 text-espresso-800 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition">Cafés Especiales</button>
+                <button onclick="filterCategory('frias')" class="cat-btn bg-espresso-100 hover:bg-espresso-200 text-espresso-800 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition">Bebidas Frías</button>
+                <button onclick="filterCategory('panaderia')" class="cat-btn bg-espresso-100 hover:bg-espresso-200 text-espresso-800 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition">Panadería Artesanal</button>
+                <button onclick="filterCategory('postres')" class="cat-btn bg-espresso-100 hover:bg-espresso-200 text-espresso-800 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition">Postres & Tartas</button>
+            </div>
+        </div>
+
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7"></div>
+    </section>
+
+    <section id="reseñas" class="py-20 bg-espresso-100/60 border-y border-espresso-200/80 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-terracota-500 font-bold text-xs uppercase tracking-widest">Experiencias Reales</span>
+                <h2 class="text-3xl sm:text-4xl font-serif font-extrabold text-espresso-900 mt-1">
+                    Lo que Dicen Nuestros Amantes del Café
+                </h2>
+                <p class="text-espresso-800/70 mt-2 text-sm">
+                    Descubre las opiniones de la comunidad Benji o déjanos tus comentarios sobre tu última visita.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-10 items-start">
+                <div class="lg:col-span-4 bg-white p-6 sm:p-8 rounded-3xl border border-espresso-200/80 shadow-xl space-y-6">
+                    <div class="text-center pb-6 border-b border-espresso-100">
+                        <span class="text-5xl font-serif font-extrabold text-espresso-900">4.9</span>
+                        <div class="flex justify-center text-gold-500 my-2 text-sm gap-1">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-xs text-espresso-600 font-semibold">Basado en <span id="total-reviews-count">128</span> valoraciones verificadas</p>
+                    </div>
+
+                    <div class="space-y-2.5 text-xs font-semibold text-espresso-800">
+                        <div class="flex items-center gap-3">
+                            <span class="w-12">5 Estrellas</span>
+                            <div class="flex-1 h-2 bg-espresso-100 rounded-full overflow-hidden">
+                                <div class="bg-gold-500 h-full w-[92%]"></div>
+                            </div>
+                            <span class="w-8 text-right text-espresso-500">92%</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-12">4 Estrellas</span>
+                            <div class="flex-1 h-2 bg-espresso-100 rounded-full overflow-hidden">
+                                <div class="bg-gold-500 h-full w-[6%]"></div>
+                            </div>
+                            <span class="w-8 text-right text-espresso-500">6%</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-12">3 Estrellas</span>
+                            <div class="flex-1 h-2 bg-espresso-100 rounded-full overflow-hidden">
+                                <div class="bg-gold-500 h-full w-[2%]"></div>
+                            </div>
+                            <span class="w-8 text-right text-espresso-500">2%</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-12">2 Estrellas</span>
+                            <div class="flex-1 h-2 bg-espresso-100 rounded-full overflow-hidden">
+                                <div class="bg-gold-500 h-full w-[0%]"></div>
+                            </div>
+                            <span class="w-8 text-right text-espresso-500">0%</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-12">1 Estrella</span>
+                            <div class="flex-1 h-2 bg-espresso-100 rounded-full overflow-hidden">
+                                <div class="bg-gold-500 h-full w-[0%]"></div>
+                            </div>
+                            <span class="w-8 text-right text-espresso-500">0%</span>
+                        </div>
+                    </div>
+
+                    <button onclick="toggleReviewForm()" class="w-full bg-espresso-900 hover:bg-espresso-800 text-crema-100 font-bold py-3 rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <span>Escribir una Reseña</span>
+                    </button>
+                </div>
+
+                <div class="lg:col-span-8 space-y-8">
+                    <div id="add-review-form" class="hidden bg-white p-6 sm:p-8 rounded-3xl border border-terracota-500/30 shadow-xl transition-all">
+                        <h3 class="text-xl font-serif font-bold text-espresso-900 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-comment-dots text-terracota-500"></i>
+                            Dejar tu Opinión
+                        </h3>
+                        <form onsubmit="submitReview(event)" class="space-y-4">
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-espresso-800 mb-1">Tu Nombre Completo *</label>
+                                    <input type="text" id="rev-name" required placeholder="Ej: Sofía Martínez" class="w-full bg-espresso-50/50 border border-espresso-200 rounded-xl px-4 py-2.5 text-xs text-espresso-900 focus:outline-none focus:border-terracota-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-espresso-800 mb-1">Ocupación / Rol</label>
+                                    <input type="text" id="rev-role" placeholder="Ej: Sommelier de Café / Cliente habitual" class="w-full bg-espresso-50/50 border border-espresso-200 rounded-xl px-4 py-2.5 text-xs text-espresso-900 focus:outline-none focus:border-terracota-500">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-espresso-800 mb-1">Calificación (Estrellas) *</label>
+                                <select id="rev-rating" class="w-full bg-espresso-50/50 border border-espresso-200 rounded-xl px-4 py-2.5 text-xs text-espresso-900 focus:outline-none focus:border-terracota-500">
+                                    <option value="5">★★★★★ (5/5 - Excelente)</option>
+                                    <option value="4">★★★★☆ (4/5 - Muy Bueno)</option>
+                                    <option value="3">★★★☆☆ (3/5 - Aceptable)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-espresso-800 mb-1">Tu Comentario *</label>
+                                <textarea id="rev-comment" required rows="3" placeholder="Describe el sabor del café, la textura del pan o la atención recibida..." class="w-full bg-espresso-50/50 border border-espresso-200 rounded-xl px-4 py-2.5 text-xs text-espresso-900 focus:outline-none focus:border-terracota-500"></textarea>
+                            </div>
+
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button type="button" onclick="toggleReviewForm()" class="px-4 py-2 rounded-xl text-xs font-bold text-espresso-600 hover:bg-espresso-100 transition">Cancelar</button>
+                                <button type="submit" class="gold-gradient text-white font-bold px-6 py-2.5 rounded-xl text-xs shadow-md transition transform active:scale-95">Publicar Reseña</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="reviews-container" class="grid sm:grid-cols-2 gap-6"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full no-print">
+        <div class="text-center mb-12">
+            <span class="text-terracota-500 font-bold text-xs uppercase tracking-widest">Resuelve tus Dudas</span>
+            <h2 class="text-3xl sm:text-4xl font-serif font-extrabold text-espresso-900 mt-1">
+                Preguntas Frecuentes
+            </h2>
+            <p class="text-espresso-800/70 mt-2 text-sm">
+                Encuentra respuestas rápidas sobre nuestra selección de café, opciones veganas y envíos.
+            </p>
+        </div>
+
+        <div class="space-y-4" id="faq-accordion">
+            <div class="bg-white rounded-2xl border border-espresso-200/80 shadow-sm overflow-hidden">
+                <button onclick="toggleFaq(this)" class="w-full p-5 text-left font-bold text-espresso-900 flex justify-between items-center text-sm sm:text-base hover:bg-espresso-50/50 transition">
+                    <span>¿De dónde provienen los granos de café de Benji?</span>
+                    <i class="fa-solid fa-chevron-down text-terracota-500 text-xs transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content hidden px-5 pb-5 text-xs sm:text-sm text-espresso-800/80 leading-relaxed border-t border-espresso-100 pt-3">
+                    Trabajamos directamente con micro-caficultores sustentables en las regiones de Chiapas (México), Huila (Colombia) y Yirgacheffe (Etiopía), asegurando comercio justo y tuestes frescos semanalmente en nuestro propio tostador.
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-espresso-200/80 shadow-sm overflow-hidden">
+                <button onclick="toggleFaq(this)" class="w-full p-5 text-left font-bold text-espresso-900 flex justify-between items-center text-sm sm:text-base hover:bg-espresso-50/50 transition">
+                    <span>¿Cuentan con opciones de leche vegetal y repostería sin gluten?</span>
+                    <i class="fa-solid fa-chevron-down text-terracota-500 text-xs transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content hidden px-5 pb-5 text-xs sm:text-sm text-espresso-800/80 leading-relaxed border-t border-espresso-100 pt-3">
+                    ¡Sí! Ofrecemos leche de avena barista, almendra y soya sin costo adicional. Además, nuestro menú cuenta con croissants y galletas veganas, así como brownies horneados con harina de almendra libre de gluten.
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-espresso-200/80 shadow-sm overflow-hidden">
+                <button onclick="toggleFaq(this)" class="w-full p-5 text-left font-bold text-espresso-900 flex justify-between items-center text-sm sm:text-base hover:bg-espresso-50/50 transition">
+                    <span>¿Cómo funciona el servicio a domicilio y tiempo de entrega?</span>
+                    <i class="fa-solid fa-chevron-down text-terracota-500 text-xs transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content hidden px-5 pb-5 text-xs sm:text-sm text-espresso-800/80 leading-relaxed border-t border-espresso-100 pt-3">
+                    Garantizamos entregas en menos de 35 minutos dentro del radio de la ciudad en empaques térmicos biodegradables que conservan la temperatura y el aroma exacto de tu bebida.
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-espresso-200/80 shadow-sm overflow-hidden">
+                <button onclick="toggleFaq(this)" class="w-full p-5 text-left font-bold text-espresso-900 flex justify-between items-center text-sm sm:text-base hover:bg-espresso-50/50 transition">
+                    <span>¿Puedo adquirir granos en bolsa para preparar en casa?</span>
+                    <i class="fa-solid fa-chevron-down text-terracota-500 text-xs transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content hidden px-5 pb-5 text-xs sm:text-sm text-espresso-800/80 leading-relaxed border-t border-espresso-100 pt-3">
+                    Por supuesto. Vendemos presentaciones de 250g y 1kg en grano entero o molienda personalizada según tu método de extracción (Prensa Francesa, V60, Espresso o Cafetera Italiana).
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-espresso-950 text-crema-200/80 pt-16 pb-12 border-t border-espresso-900 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 gold-gradient text-white rounded-lg flex items-center justify-center font-bold text-base">
+                        <i class="fa-solid fa-mug-saucer"></i>
+                    </div>
+                    <span class="font-serif font-bold text-xl text-white">Café <span class="text-gold-400">Benji</span></span>
+                </div>
+                <p class="text-xs text-crema-300/60 leading-relaxed">
+                    Especialistas en la cultura del café, tuestes artesanales y panadería recién horneada. Pasión por la excelencia en cada gota.
+                </p>
+                <div class="flex gap-3 text-gold-400 text-sm">
+                    <a href="#instagram" onclick="showToast('Síguenos en @cafe.benji')" class="w-8 h-8 rounded-full bg-espresso-900 flex items-center justify-center hover:bg-terracota-500 hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#facebook" onclick="showToast('Visita nuestra página de Facebook')" class="w-8 h-8 rounded-full bg-espresso-900 flex items-center justify-center hover:bg-terracota-500 hover:text-white transition"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#twitter" onclick="showToast('Entérate de eventos en Twitter')" class="w-8 h-8 rounded-full bg-espresso-900 flex items-center justify-center hover:bg-terracota-500 hover:text-white transition"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-white text-sm mb-4">Horarios de Atención</h4>
+                <ul class="space-y-2 text-xs text-crema-300/70">
+                    <li class="flex justify-between"><span>Lunes - Viernes:</span> <span class="text-white font-semibold">7:00 AM - 9:00 PM</span></li>
+                    <li class="flex justify-between"><span>Sábados:</span> <span class="text-white font-semibold">8:00 AM - 10:00 PM</span></li>
+                    <li class="flex justify-between"><span>Domingos:</span> <span class="text-white font-semibold">8:00 AM - 8:00 PM</span></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-white text-sm mb-4">Enlaces Rápidos</h4>
+                <ul class="space-y-2 text-xs text-crema-300/70">
+                    <li><a href="#menu" class="hover:text-gold-400 transition">Menú Digital</a></li>
+                    <li><a href="#reseñas" class="hover:text-gold-400 transition">Reseñas de Clientes</a></li>
+                    <li><a href="#faq" class="hover:text-gold-400 transition">Preguntas Frecuentes</a></li>
+                    <li><a href="#soporte" onclick="openModal('Privacidad & Términos', 'En Café Benji nos tomamos muy en serio la seguridad de tus datos personales e información de pago.')" class="hover:text-gold-400 transition">Política de Privacidad</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-white text-sm mb-4">Boletín Gourmet</h4>
+                <p class="text-xs text-crema-300/70 mb-3">Recibe ofertas exclusivas y catas de café privadas.</p>
+                <form onsubmit="subscribeNewsletter(event)" class="flex flex-col gap-2">
+                    <input type="email" required placeholder="tu@email.com" class="bg-espresso-900 text-xs text-white px-3.5 py-2.5 rounded-xl border border-espresso-800 outline-none focus:border-gold-400">
+                    <button type="submit" class="gold-gradient text-white text-xs font-bold py-2.5 rounded-xl hover:opacity-90 transition">Suscribirme</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-espresso-900/80 text-center text-xs text-crema-300/40">
+            © 2026 Café Benji. Todos los derechos reservados. Diseñado para ofrecer la mejor experiencia gourmet.
+        </div>
+    </footer>
+
+    <div id="cart-modal" class="fixed inset-0 bg-espresso-950/70 backdrop-blur-sm z-50 flex justify-end opacity-0 pointer-events-none transition-opacity duration-300 no-print">
+        <div id="cart-panel" class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between transform translate-x-full transition-transform duration-300">
+            <div class="p-6 bg-espresso-900 text-white flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-bag-shopping text-gold-400 text-xl"></i>
+                    <h3 class="font-serif font-bold text-lg">Tu Pedido Benji</h3>
+                </div>
+                <button onclick="toggleCartModal()" class="text-crema-300/70 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+
+            <div class="p-6 bg-espresso-50 border-t border-espresso-200/80 space-y-4">
+                <div class="space-y-1.5 text-xs text-espresso-800">
+                    <div class="flex justify-between">
+                        <span>Subtotal</span>
+                        <span id="cart-subtotal" class="font-bold">$0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Envío estimado</span>
+                        <span id="cart-shipping" class="font-bold text-mint-600">$2.50</span>
+                    </div>
+                    <div class="flex justify-between text-base font-bold text-espresso-900 pt-2 border-t border-espresso-200">
+                        <span>Total</span>
+                        <span id="cart-total" class="text-terracota-500">$0.00</span>
+                    </div>
+                </div>
+
+                <button onclick="openCheckoutModal()" class="w-full gold-gradient text-white py-3.5 rounded-xl font-bold text-sm shadow-lg hover:opacity-95 transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-credit-card"></i>
+                    <span>Finalizar Compra / Pagar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkout-modal" class="fixed inset-0 bg-espresso-950/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 no-print">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-6 border border-espresso-200 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-espresso-100 pb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 gold-gradient text-white rounded-lg flex items-center justify-center text-sm font-bold">
+                        <i class="fa-solid fa-cash-register"></i>
+                    </div>
+                    <h3 class="font-serif font-bold text-xl text-espresso-900">Finalizar Compra</h3>
+                </div>
+                <button onclick="closeCheckoutModal()" class="text-espresso-400 hover:text-espresso-900 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="bg-espresso-50 p-4 rounded-2xl border border-espresso-100 space-y-1 text-xs">
+                <div class="flex justify-between font-medium text-espresso-600">
+                    <span>Monto a Pagar:</span>
+                    <span id="checkout-total-display" class="text-base font-extrabold text-terracota-500">$0.00</span>
+                </div>
+                <p class="text-[10px] text-espresso-400">Incluye productos e impuestos aplicables.</p>
+            </div>
+
+            <div id="checkout-alert" class="hidden bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl text-xs flex items-start gap-3">
+                <i class="fa-solid fa-triangle-exclamation text-red-500 text-base shrink-0 mt-0.5"></i>
+                <div>
+                    <h5 class="font-bold text-red-800 text-xs">Pago Rechazado</h5>
+                    <p id="checkout-alert-msg" class="text-[11px] mt-0.5">El dinero ingresado es insuficiente para completar la compra.</p>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <label class="block text-xs font-bold text-espresso-800 uppercase tracking-wider">Método de Pago</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <button type="button" id="pay-card-btn" onclick="selectPayMethod('card')" class="pay-method-btn bg-espresso-900 text-white p-3.5 rounded-2xl border-2 border-espresso-900 font-bold text-xs flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-credit-card text-gold-400"></i>
+                        <span>Tarjeta</span>
+                    </button>
+                    <button type="button" id="pay-cash-btn" onclick="selectPayMethod('cash')" class="pay-method-btn bg-espresso-50 text-espresso-800 p-3.5 rounded-2xl border-2 border-espresso-200 font-bold text-xs flex items-center justify-center gap-2 hover:border-espresso-400 transition">
+                        <i class="fa-solid fa-money-bill-wave text-mint-600"></i>
+                        <span>Efectivo</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="card-fields" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-espresso-800 mb-1">Nombre en la Tarjeta</label>
+                    <input type="text" id="card-name" placeholder="Ej: Benjamín Morales" class="w-full bg-espresso-50 border border-espresso-200 rounded-xl px-4 py-2.5 text-xs text-espresso-900 outline-none focus:border-terracota-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-espresso-800 mb-1">Número de Tarjeta</label>
+                    <input type="text" id="card-number" maxlength="19" placeholder="4532 •••• •••• 8901" class="w-full bg-espresso-50 border border-espresso-200 rounded-xl px-4 py-2.5 text-xs text-espresso-900 outline-none focus:border-terracota-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-espresso-800 mb-1">Expiración</label>
+                        <input type="text" id="card-exp" placeholder="MM/AA" maxlength="5" class="w-full bg-espresso-50 border border-espresso-200 rounded-xl px-4 py-2.5 text-xs text-espresso-900 outline-none focus:border-terracota-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-espresso-800 mb-1">CVV</label>
+                        <input type="password" id="card-cvv" maxlength="4" placeholder="123" class="w-full bg-espresso-50 border border-espresso-200 rounded-xl px-4 py-2.5 text-xs text-espresso-900 outline-none focus:border-terracota-500">
+                    </div>
+                </div>
+            </div>
+
+            <div id="cash-fields" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-bold text-espresso-800 mb-1">Monto Entregado por el Cliente ($)</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-2.5 text-xs font-bold text-espresso-400">$</span>
+                        <input type="number" id="cash-amount" step="0.5" placeholder="0.00" class="w-full pl-8 pr-4 py-2.5 bg-espresso-50 border border-espresso-200 rounded-xl text-xs text-espresso-900 font-bold outline-none focus:border-terracota-500">
+                    </div>
+                    <p class="text-[10px] text-espresso-500 mt-1">Ingresa el dinero en efectivo recibido en caja.</p>
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <button onclick="processPayment()" class="w-full gold-gradient text-white py-3.5 rounded-xl font-bold text-sm shadow-xl hover:opacity-95 transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Procesar Pago</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="ticket-modal" class="fixed inset-0 bg-espresso-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 border border-espresso-200 my-auto">
+            
+            <div id="printable-ticket" class="bg-amber-50/40 p-6 rounded-2xl border border-dashed border-espresso-300 text-espresso-950 font-mono text-xs space-y-3">
+                <div class="text-center space-y-1">
+                    <h2 class="font-serif font-extrabold text-lg text-espresso-900 tracking-wider">CAFÉ BENJI</h2>
+                    <p class="text-[10px] uppercase tracking-widest text-espresso-600">Especialidad & Repostería</p>
+                    <p class="text-[10px] text-espresso-500">Av. Reforma 405, CDMX</p>
+                    <p class="text-[10px] text-espresso-500">Tel: +52 55 9876 5432</p>
+                </div>
+
+                <div class="border-t border-b border-dashed border-espresso-300 py-2 space-y-1 text-[10px]">
+                    <div class="flex justify-between">
+                        <span>ORDEN #:</span>
+                        <span id="ticket-order-id" class="font-bold">#BNJ-0000</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>FECHA:</span>
+                        <span id="ticket-date">--/--/----</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>MÉTODO:</span>
+                        <span id="ticket-method" class="font-bold uppercase">TARJETA</span>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5 py-1">
+                    <div class="flex justify-between font-bold border-b border-espresso-200 pb-1 text-[10px]">
+                        <span>CANT / ITEM</span>
+                        <span>IMPORTE</span>
+                    </div>
+                    <div id="ticket-items-list" class="space-y-1 text-[11px]"></div>
+                </div>
+
+                <div class="border-t border-dashed border-espresso-300 pt-2 space-y-1 text-[11px]">
+                    <div class="flex justify-between">
+                        <span>SUBTOTAL:</span>
+                        <span id="ticket-subtotal">$0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>ENVÍO:</span>
+                        <span id="ticket-shipping">$0.00</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-xs pt-1 border-t border-espresso-200">
+                        <span>TOTAL PAID:</span>
+                        <span id="ticket-total" class="text-espresso-900 font-extrabold">$0.00</span>
+                    </div>
+                </div>
+
+                <div id="ticket-cash-details" class="border-t border-dashed border-espresso-300 pt-2 space-y-1 text-[10px]">
+                    <div class="flex justify-between">
+                        <span>EFECTIVO RECIBIDO:</span>
+                        <span id="ticket-paid-amount">$0.00</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-xs text-mint-600">
+                        <span>SU CAMBIO:</span>
+                        <span id="ticket-change-amount">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="text-center pt-3 border-t border-espresso-200 space-y-1">
+                    <p class="font-serif font-bold text-xs">¡Gracias por tu preferencia!</p>
+                    <p class="text-[9px] text-espresso-500">Conserva este ticket para cualquier aclaración.</p>
+                </div>
+            </div>
+
+            <div class="flex gap-3 no-print">
+                <button onclick="closeTicketModal()" class="flex-1 bg-espresso-100 hover:bg-espresso-200 text-espresso-900 text-xs font-bold py-3 rounded-xl transition">Cerrar</button>
+                <button onclick="window.print()" class="flex-1 gold-gradient text-white text-xs font-bold py-3 rounded-xl shadow-md hover:opacity-95 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Imprimir Ticket</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="info-modal" class="fixed inset-0 bg-espresso-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 no-print">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-5 border border-espresso-100 transform scale-95 transition-transform duration-300" id="info-modal-card">
+            <div class="flex items-start justify-between border-b border-espresso-100 pb-4">
+                <h3 id="modal-title" class="font-serif font-bold text-xl text-espresso-900">Información</h3>
+                <button onclick="closeModal()" class="text-espresso-400 hover:text-espresso-900 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p id="modal-content" class="text-xs sm:text-sm text-espresso-800/80 leading-relaxed">Contenido...</p>
+            <div class="flex justify-end pt-2">
+                <button onclick="closeModal()" class="bg-espresso-900 text-white text-xs font-bold px-6 py-2.5 rounded-xl hover:bg-espresso-800 transition">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            { id: 1, name: 'Espresso Benji Gold', category: 'especiales', price: 4.50, oldPrice: null, badge: 'NUEVO', desc: 'Extracción doble concentrada de granos seleccionados con notas de avellana.', image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=600&q=80' },
+            { id: 2, name: 'Cappuccino de Vainilla', category: 'especiales', price: 5.80, oldPrice: 6.50, badge: 'OFERTA', desc: 'Espresso aterciopelado con leche cremada y esencia natural de vainilla Papantla.', image: 'https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=600&q=80' },
+            { id: 3, name: 'Iced Caramel Macchiato', category: 'frias', price: 6.20, oldPrice: null, badge: 'POPULAR', desc: 'Café frío vertido sobre capas de leche helada, hielo y jarabe artesanal de caramelo.', image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80' },
+            { id: 4, name: 'Croissant Francés Mantequilla', category: 'panaderia', price: 3.90, oldPrice: null, badge: null, desc: 'Hojaldre artesanal elaborado con mantequilla europea importada, crujiente por fuera.', image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80' },
+            { id: 5, name: 'Cold Brew Infusión 12h', category: 'frias', price: 5.50, oldPrice: 6.00, badge: 'OFERTA', desc: 'Extracción lenta en agua fría durante 12 horas. Sabor suave, baja acidez.', image: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80' },
+            { id: 6, name: 'Tarta de Queso y Frutos Rojos', category: 'postres', price: 6.90, oldPrice: null, badge: 'NUEVO', desc: 'Receta vasca cremosa con mermelada artesanal de frambuesas y moras silvestres.', image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=600&q=80' },
+            { id: 7, name: 'Chocolatín Hojaldrado', category: 'panaderia', price: 4.20, oldPrice: null, badge: null, desc: 'Pan hojaldrado relleno de dos barras de chocolate amargo 70% cacao.', image: 'https://images.unsplash.com/photo-1608198093002-ad4e005484ec?auto=format&fit=crop&w=600&q=80' },
+            { id: 8, name: 'Flat White Australiano', category: 'especiales', price: 5.20, oldPrice: null, badge: null, desc: 'Microespuma sedosa sobre doble shot de ristretto. Un clásico equilibrado.', image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=600&q=80' }
+        ];
+
+        let reviewsList = [
+            { id: 1, name: 'Camila Sotomayor', role: 'Crítica Gastronómica', rating: 5, comment: 'El Espresso Benji Gold tiene notas florales y de avellana únicas. Acompañado del croissant recién horneado, es el mejor desayuno de la ciudad.', date: 'Hace 2 días' },
+            { id: 2, name: 'Diego Mendoza', role: 'Barista Aficionado', rating: 5, comment: 'Impresionante consistencia en la molienda y temperatura de extracción. La atención en barra es cálida y muy profesional.', date: 'Hace 5 días' },
+            { id: 3, name: 'Valeria Rivas', role: 'Cliente Frecuente', rating: 5, comment: 'Me encanta pedir el Iced Caramel Macchiato para trabajar. Llega súper frío y en su punto en menos de 25 minutos.', date: 'Hace 1 semana' }
+        ];
+
+        let cart = [];
+        let selectedPayMethod = 'card';
+
+        function renderProducts(itemsToRender = products) {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+
+            if(itemsToRender.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-espresso-600">
+                        <i class="fa-solid fa-mug-hot text-4xl mb-3 text-espresso-300"></i>
+                        <p class="font-bold text-base">No encontramos productos que coincidan.</p>
+                        <button onclick="filterCategory('all')" class="mt-3 text-xs text-terracota-500 font-bold underline">Ver todo el menú</button>
+                    </div>
+                `;
+                return;
+            }
+
+            itemsToRender.forEach(p => {
+                let badgeHTML = '';
+                if(p.badge === 'OFERTA') badgeHTML = `<span class="bg-terracota-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-md">OFERTA</span>`;
+                else if(p.badge === 'NUEVO') badgeHTML = `<span class="bg-gold-500 text-espresso-950 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-md">NUEVO</span>`;
+                else if(p.badge === 'POPULAR') badgeHTML = `<span class="bg-espresso-900 text-crema-100 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-md">POPULAR</span>`;
+
+                const priceHTML = p.oldPrice 
+                    ? `<span class="text-xs text-espresso-400 line-through mr-1.5">$${p.oldPrice.toFixed(2)}</span><span class="text-lg font-bold text-espresso-900">$${p.price.toFixed(2)}</span>`
+                    : `<span class="text-lg font-bold text-espresso-900">$${p.price.toFixed(2)}</span>`;
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-3xl border border-espresso-200/80 overflow-hidden shadow-md hover:shadow-2xl transition duration-300 flex flex-col justify-between group";
+                card.innerHTML = `
+                    <div>
+                        <div class="relative h-48 overflow-hidden bg-espresso-900">
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500 opacity-90" onerror="this.onerror=null; this.src='https://placehold.co/600x400/2c1810/ffffff?text=${encodeURIComponent(p.name)}';">
+                            <div class="absolute top-3 left-3 flex gap-2">${badgeHTML}</div>
+                        </div>
+                        <div class="p-5 space-y-2">
+                            <h3 class="font-serif font-bold text-lg text-espresso-900 group-hover:text-terracota-500 transition">${p.name}</h3>
+                            <p class="text-xs text-espresso-800/70 leading-relaxed line-clamp-2">${p.desc}</p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-2 flex items-center justify-between border-t border-espresso-100/60 mt-auto">
+                        <div>${priceHTML}</div>
+                        <button onclick="addToCart(${p.id})" class="gold-gradient hover:opacity-90 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition">
+                            <i class="fa-solid fa-plus text-[10px]"></i>
+                            <span>Agregar</span>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterCategory(cat) {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-espresso-900', 'text-crema-100', 'shadow-md');
+                btn.classList.add('bg-espresso-100', 'text-espresso-800');
+            });
+            event.target.classList.remove('bg-espresso-100', 'text-espresso-800');
+            event.target.classList.add('bg-espresso-900', 'text-crema-100', 'shadow-md');
+
+            if(cat === 'all') renderProducts(products);
+            else renderProducts(products.filter(p => p.category === cat));
+        }
+
+        function handleSearch(e) {
+            e.preventDefault();
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            if(!query) { renderProducts(products); return; }
+            renderProducts(products.filter(p => p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query)));
+            document.getElementById('menu').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+
+            if(existingItem) existingItem.qty++;
+            else cart.push({ ...product, qty: 1 });
+
+            updateCartUI();
+            showToast(`Añadido: ${product.name}`);
+        }
+
+        function updateCartQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if(!item) return;
+            item.qty += delta;
+            if(item.qty <= 0) cart = cart.filter(i => i.id !== id);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartBadge = document.getElementById('cart-badge');
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+
+            if(totalQty > 0) {
+                cartBadge.innerText = totalQty;
+                cartBadge.classList.remove('hidden');
+            } else {
+                cartBadge.classList.add('hidden');
+            }
+
+            if(cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-center text-espresso-400 py-12">
+                        <i class="fa-solid fa-basket-shopping text-5xl mb-3 opacity-40"></i>
+                        <p class="font-bold text-sm text-espresso-800">Tu carrito está vacío</p>
+                        <p class="text-xs text-espresso-500 mt-1">Agrega cafés o panecillos para comenzar tu orden.</p>
+                    </div>
+                `;
+            } else {
+                cartItemsContainer.innerHTML = '';
+                cart.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = "flex items-center justify-between bg-espresso-50 p-3.5 rounded-2xl border border-espresso-100 gap-3";
+                    row.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" class="w-14 h-14 object-cover rounded-xl shrink-0">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-xs text-espresso-900 truncate">${item.name}</h4>
+                            <p class="text-xs text-terracota-500 font-bold">$${(item.price * item.qty).toFixed(2)}</p>
+                        </div>
+                        <div class="flex items-center bg-white rounded-lg border border-espresso-200 px-2 py-1 gap-2">
+                            <button onclick="updateCartQty(${item.id}, -1)" class="text-espresso-600 hover:text-terracota-500 text-xs font-bold px-1">-</button>
+                            <span class="text-xs font-bold text-espresso-900">${item.qty}</span>
+                            <button onclick="updateCartQty(${item.id}, 1)" class="text-espresso-600 hover:text-terracota-500 text-xs font-bold px-1">+</button>
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(row);
+                });
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const shipping = cart.length > 0 ? 2.50 : 0.00;
+            const total = subtotal + shipping;
+
+            document.getElementById('cart-subtotal').innerText = `$${subtotal.toFixed(2)}`;
+            document.getElementById('cart-shipping').innerText = `$${shipping.toFixed(2)}`;
+            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+        }
+
+        function toggleCartModal() {
+            const modal = document.getElementById('cart-modal');
+            const panel = document.getElementById('cart-panel');
+            if(modal.classList.contains('pointer-events-none')) {
+                modal.classList.remove('pointer-events-none', 'opacity-0');
+                panel.classList.remove('translate-x-full');
+            } else {
+                panel.classList.add('translate-x-full');
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('pointer-events-none'), 300);
+            }
+        }
+
+        function openCheckoutModal() {
+            if(cart.length === 0) {
+                showToast('Añade productos al carrito antes de pagar.');
+                return;
+            }
+            toggleCartModal();
+            
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const total = subtotal + 2.50;
+            
+            document.getElementById('checkout-total-display').innerText = `$${total.toFixed(2)}`;
+            document.getElementById('checkout-alert').classList.add('hidden');
+            
+            const checkoutModal = document.getElementById('checkout-modal');
+            checkoutModal.classList.remove('pointer-events-none', 'opacity-0');
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('pointer-events-none'), 300);
+        }
+
+        function selectPayMethod(method) {
+            selectedPayMethod = method;
+            const cardBtn = document.getElementById('pay-card-btn');
+            const cashBtn = document.getElementById('pay-cash-btn');
+            const cardFields = document.getElementById('card-fields');
+            const cashFields = document.getElementById('cash-fields');
+
+            if(method === 'card') {
+                cardBtn.className = "pay-method-btn bg-espresso-900 text-white p-3.5 rounded-2xl border-2 border-espresso-900 font-bold text-xs flex items-center justify-center gap-2 transition";
+                cashBtn.className = "pay-method-btn bg-espresso-50 text-espresso-800 p-3.5 rounded-2xl border-2 border-espresso-200 font-bold text-xs flex items-center justify-center gap-2 hover:border-espresso-400 transition";
+                cardFields.classList.remove('hidden');
+                cashFields.classList.add('hidden');
+            } else {
+                cashBtn.className = "pay-method-btn bg-espresso-900 text-white p-3.5 rounded-2xl border-2 border-espresso-900 font-bold text-xs flex items-center justify-center gap-2 transition";
+                cardBtn.className = "pay-method-btn bg-espresso-50 text-espresso-800 p-3.5 rounded-2xl border-2 border-espresso-200 font-bold text-xs flex items-center justify-center gap-2 hover:border-espresso-400 transition";
+                cashFields.classList.remove('hidden');
+                cardFields.classList.add('hidden');
+            }
+            document.getElementById('checkout-alert').classList.add('hidden');
+        }
+
+        function processPayment() {
+            const alertBox = document.getElementById('checkout-alert');
+            const alertMsg = document.getElementById('checkout-alert-msg');
+            alertBox.classList.add('hidden');
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const total = subtotal + 2.50;
+
+            let paidAmount = total;
+            let changeAmount = 0.00;
+
+            if(selectedPayMethod === 'cash') {
+                const cashInput = parseFloat(document.getElementById('cash-amount').value);
+                if(isNaN(cashInput) || cashInput < total) {
+                    alertMsg.innerText = "Pago Rechazado: El dinero ingresado es insuficiente para completar la compra.";
+                    alertBox.classList.remove('hidden');
+                    return;
+                }
+                paidAmount = cashInput;
+                changeAmount = paidAmount - total;
+            } else {
+                const name = document.getElementById('card-name').value.trim();
+                const num = document.getElementById('card-number').value.trim();
+                if(!name || num.length < 12) {
+                    alertMsg.innerText = "Pago Rechazado: Datos de tarjeta requeridos o inválidos.";
+                    alertBox.classList.remove('hidden');
+                    return;
+                }
+            }
+
+            generateAndShowTicket(paidAmount, changeAmount);
+            closeCheckoutModal();
+
+            cart = [];
+            updateCartUI();
+            showToast('¡Pago procesado con éxito!');
+        }
+
+        function generateAndShowTicket(paidAmount, changeAmount) {
+            const orderId = '#BNJ-' + Math.floor(1000 + Math.random() * 9000);
+            const now = new Date();
+            const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const shipping = 2.50;
+            const total = subtotal + shipping;
+
+            document.getElementById('ticket-order-id').innerText = orderId;
+            document.getElementById('ticket-date').innerText = dateStr;
+            document.getElementById('ticket-method').innerText = selectedPayMethod === 'cash' ? 'EFECTIVO' : 'TARJETA DE DÉBITO/CRÉDITO';
+
+            const itemsContainer = document.getElementById('ticket-items-list');
+            itemsContainer.innerHTML = '';
+
+            cart.forEach(item => {
+                const row = document.createElement('div');
+                row.className = "flex justify-between";
+                row.innerHTML = `
+                    <span>${item.qty}x ${item.name}</span>
+                    <span>$${(item.price * item.qty).toFixed(2)}</span>
+                `;
+                itemsContainer.appendChild(row);
+            });
+
+            document.getElementById('ticket-subtotal').innerText = `$${subtotal.toFixed(2)}`;
+            document.getElementById('ticket-shipping').innerText = `$${shipping.toFixed(2)}`;
+            document.getElementById('ticket-total').innerText = `$${total.toFixed(2)}`;
+
+            const cashDetails = document.getElementById('ticket-cash-details');
+            if(selectedPayMethod === 'cash') {
+                cashDetails.classList.remove('hidden');
+                document.getElementById('ticket-paid-amount').innerText = `$${paidAmount.toFixed(2)}`;
+                document.getElementById('ticket-change-amount').innerText = `$${changeAmount.toFixed(2)}`;
+            } else {
+                cashDetails.classList.add('hidden');
+            }
+
+            const ticketModal = document.getElementById('ticket-modal');
+            ticketModal.classList.remove('pointer-events-none', 'opacity-0');
+        }
+
+        function closeTicketModal() {
+            const modal = document.getElementById('ticket-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('pointer-events-none'), 300);
+        }
+
+        function renderReviews() {
+            const container = document.getElementById('reviews-container');
+            container.innerHTML = '';
+            
+            reviewsList.forEach(rev => {
+                let stars = '';
+                for(let i=0; i<5; i++) {
+                    stars += (i < rev.rating) ? `<i class="fa-solid fa-star text-gold-500"></i>` : `<i class="fa-regular fa-star text-espresso-200"></i>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = "bg-white p-6 rounded-3xl border border-espresso-200/80 shadow-md flex flex-col justify-between space-y-4";
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex text-xs gap-1">${stars}</div>
+                            <span class="text-[10px] text-espresso-400 font-semibold">${rev.date}</span>
+                        </div>
+                        <p class="text-xs text-espresso-800 leading-relaxed italic">"${rev.comment}"</p>
+                    </div>
+                    <div class="flex items-center gap-3 pt-3 border-t border-espresso-100">
+                        <div class="w-8 h-8 rounded-full gold-gradient text-white flex items-center justify-center font-bold text-xs uppercase">
+                            ${rev.name.charAt(0)}
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-xs text-espresso-900">${rev.name}</h5>
+                            <p class="text-[10px] text-espresso-500 font-medium">${rev.role}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById('total-reviews-count').innerText = 124 + reviewsList.length;
+        }
+
+        function toggleReviewForm() {
+            document.getElementById('add-review-form').classList.toggle('hidden');
+        }
+
+        function submitReview(e) {
+            e.preventDefault();
+            const name = document.getElementById('rev-name').value.trim();
+            const role = document.getElementById('rev-role').value.trim() || 'Amante del Café';
+            const rating = parseInt(document.getElementById('rev-rating').value);
+            const comment = document.getElementById('rev-comment').value.trim();
+
+            if(!name || !comment) return;
+
+            reviewsList.unshift({ id: Date.now(), name, role, rating, comment, date: 'Justo ahora' });
+            renderReviews();
+            toggleReviewForm();
+            e.target.reset();
+            showToast('¡Reseña publicada con éxito!');
+        }
+
+        function toggleFaq(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        function openModal(title, content) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-content').innerText = content;
+            const modal = document.getElementById('info-modal');
+            const card = document.getElementById('info-modal-card');
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            card.classList.remove('scale-95');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('info-modal');
+            const card = document.getElementById('info-modal-card');
+            card.classList.add('scale-95');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('pointer-events-none'), 300);
+        }
+
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = "bg-espresso-900 text-crema-100 text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl border border-espresso-700 flex items-center gap-3 transform translate-y-4 opacity-0 transition-all duration-300";
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-gold-400 text-sm"></i><span>${msg}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => toast.classList.remove('translate-y-4', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function subscribeNewsletter(e) {
+            e.preventDefault();
+            showToast('¡Gracias por suscribirte al boletín Gourmet Benji!');
+            e.target.reset();
+        }
+
+        window.onload = function() {
+            renderProducts();
+            renderReviews();
+            updateCartUI();
+        };
+    </script>
+</body>
+</html>
